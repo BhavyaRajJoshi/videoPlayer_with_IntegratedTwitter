@@ -1,0 +1,16 @@
+{
+  "name": "professiona_project",
+  "version": "1.0.0",
+  "description": "video player integrated twitter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "javascipt",
+    "js",
+    "backend"
+  ],
+  "author": "Bhavya Raj Joshi",
+  "license": "ISC"
+}
