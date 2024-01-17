@@ -2,10 +2,11 @@
 
 import dotenv from "dotenv";
 import connectDB from "./db/index.js";
-
+import { app } from "./app.js";
 dotenv.config({
-    path : '/Users/richcriticism/Documents/Documents/Bhavya_code/JS/Backend/Professiona_project/.env'
+    path: './.env'
 })
+
 
 connectDB()
 .then(() => {

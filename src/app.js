@@ -14,4 +14,11 @@ app.use(express.urlencoded({extended : true, limit: "16kb"}))//toencode url
 app.use(express.static("publicfolder"))//to store in own server
 app.use(cookieParser)//access user cookies through browser directly
  
+
+//router import 
+
+import userRouter from "./routes/user.route.js"
+
+//router declaration
+app.use("/api/v1/users", userRouter)
 export {app}
