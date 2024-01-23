@@ -5,9 +5,9 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+ 
 
-
-const generateAccessAndRefreshTokens = async(userId){
+const generateAccessAndRefreshTokens = async(userId) => {
     try {
         const user = await User.findById(userId)
         const accessToken = user.generateAccessToken()
@@ -45,17 +45,15 @@ const registerUser = asyncHandler( async (req, res) => {
         throw new ApiError(400, "all fields are required")
     }
 
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [{email}, {username}]
     })
     if(existedUser){
         throw new ApiError(409, "user with email and username already exists")
     }
 
-    const avatarLocalPath = req.files?.avatar[0]?.path
-
-    console.log("avartar local path : ", avatarLocalPath)
-    const coverImageLocalPath = req.files?.coverImage[0]?.path
+    const avatarLocalPath = req.files?.avatar[0]?.path;
+    const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
     if(!avatarLocalPath){
         throw new ApiError(400, "avatar file is required")
@@ -82,7 +80,7 @@ const registerUser = asyncHandler( async (req, res) => {
     )
 
     if(!createdUser){
-        throw new ApiError(500 , "something went wrong")
+        throw new ApiError(500 , "something went wrong, user not created")
     }
 
     return res.status(201).json(
