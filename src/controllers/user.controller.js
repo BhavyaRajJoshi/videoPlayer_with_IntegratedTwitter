@@ -34,7 +34,7 @@ const generateAccessAndRefreshTokens = async(userId) => {
 8.return response
 */
 
-const registerUser = asyncHandler( async (req, res) => {
+const registerUser = asyncHandler( async (req, res, next) => {
     const {fullName, email, username, password} = req.body
     //console.log("email: ", email);
 
@@ -46,8 +46,9 @@ const registerUser = asyncHandler( async (req, res) => {
     }
 
     const existedUser = await User.findOne({
-        $or: [{email}, {username}]
+        $or: [{ email }, { username }]
     })
+
     if(existedUser){
         throw new ApiError(409, "user with email and username already exists")
     }
@@ -72,7 +73,7 @@ const registerUser = asyncHandler( async (req, res) => {
         coverImage: coverImage?.url || "",
         email,
         password,
-        username: username.toLowercase()
+        username: username
     })
 
     const createdUser = await User.findById(user._id).select(
@@ -86,6 +87,7 @@ const registerUser = asyncHandler( async (req, res) => {
     return res.status(201).json(
         new ApiResponse(200, createdUser, "Registration Complete")
     )
+    next()
 })
 
 /*
