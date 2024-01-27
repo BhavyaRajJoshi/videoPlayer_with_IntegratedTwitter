@@ -6,7 +6,6 @@ import { loginUser } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { logoutUser } from "../controllers/user.controller.js";
 import{
-    refreshAccessToken,
     changeCurrentPassword,
     getCurrentUser,
     updateAccountDetails,

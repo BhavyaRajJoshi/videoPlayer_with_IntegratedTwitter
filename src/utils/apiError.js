@@ -4,7 +4,6 @@ class ApiError extends Error {
         message = "something went wrong",
         error = [],
         stack = ""
-
     ){
         super(message)
         this.statusCode = statusCode
@@ -20,6 +19,6 @@ class ApiError extends Error {
         }
     }
 }
-
+ 
 
 export {ApiError}

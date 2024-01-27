@@ -104,7 +104,7 @@ send response
 const loginUser = asyncHandler(async(req,res) =>{
     const {email, username, password} = req.body
 
-    if(!(username || email)){
+    if(!username && !email){
         throw new ApiError(400, "username or email is required")
     }
 
@@ -119,12 +119,12 @@ const loginUser = asyncHandler(async(req,res) =>{
     const isPasswordValid = await user.isPasswordCorrect(password)
 
     if(!isPasswordValid){
-        throw new ApiError(400, "invalid username or password")
+        throw new ApiError(400, "invalid credentials")
     }
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(user._id);
 
-    const loggesInUser = User.findById(user._id).select("-password -refreshToken")
+    const loggesInUser = await User.findById(user._id).select("-password -refreshToken")
 
     const options = {
         httpOnly: true,
@@ -151,8 +151,8 @@ const logoutUser = asyncHandler(async(req, res) => {
     User.findByIdAndUpdate(
         req.user._id,
         {
-            $set: {
-                refreshToken: undefined 
+            $unset: {
+                refreshToken: 1 
 
             }
         },
@@ -169,7 +169,7 @@ const logoutUser = asyncHandler(async(req, res) => {
     return res.status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .jsons(new ApiResponse(200, {} , "USER LoggedOut"))
+    .json(new ApiResponse(200, {} , "USER LoggedOut"))
 })
 
 const refreshAccessToken = asyncHandler(async(req,res) => {
@@ -443,9 +443,11 @@ const getWatchHistory = asyncHandler(async(req,res) => {
                             ]
                         }
                     },
-                    $addFields: {
-                        owner: {
-                            $first: "$owner"
+                    {
+                        $addFields: {
+                            owner: {
+                                $first: "$owner"
+                            }
                         }
                     }
                 ]
