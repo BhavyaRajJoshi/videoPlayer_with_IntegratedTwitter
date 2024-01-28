@@ -237,7 +237,7 @@ const changeCurrentPassword = asyncHandler(async(req, res) => {
 const getCurrentUser = asyncHandler(async(req, res) => {
     //console.log(res.status(200))
     return res.status(200)
-    .json(new ApiResponse(200, {} , "current user export successfully"))
+    .json(new ApiResponse(200, req.user , "current user export successfully"))
 })
 
 const updateAccountDetails = asyncHandler(async(req,res) => {

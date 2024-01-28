@@ -1,10 +1,12 @@
-import mongoose, {isValidObjectId} from "mongoose"
+import mongoose, {isValidObjectId} from "mongoose";
 import {Video} from "../models/video.model.js"
 import {User} from "../models/user.model.js"
 import {ApiError} from "../utils/ApiError.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
+import jwt from "jsonwebtoken";
+import { application } from "express";
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -47,7 +49,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     }
 
     const duration = video.duration
-    //const videoOwner = await findById(User._id)
+    //const videoOwner = findById(req.user?._id)
 
     const videofile = await Video.create({
         videoFile: video.url,
@@ -64,10 +66,19 @@ const publishAVideo = asyncHandler(async (req, res) => {
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
+    const {videoId}  = req.params
     //TODO: get video by id
     /*
     */
+    const video = await Video.findById(videoId);
+
+    // if (!video) {
+    //     // If the video with the given ID is not found, return a 404 response
+    //     throw new ApiError(400, "video not found")
+    // }
+
+   return res.status(200).json(new ApiResponse(200, {videoId} , "current video export successfully"))
+
 })
 
 const updateVideo = asyncHandler(async (req, res) => {
