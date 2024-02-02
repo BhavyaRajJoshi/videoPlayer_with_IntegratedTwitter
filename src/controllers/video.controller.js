@@ -10,7 +10,7 @@ import { application } from "express";
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
-    const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query
+    const { page = 1, limit = 50, query, sortBy, sortType, userId } = req.query
     //TODO: get all videos based on query, sort, pagination
     /*
     */
@@ -83,18 +83,69 @@ const getVideoById = asyncHandler(async (req, res) => {
 const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: update video details like title, description, thumbnail
+    /*
+    */
+    if(!videoId){
+        throw new ApiError(400, "videoId required")
+    }
 
+    const {title, description, thumbnail} = req.body
 
+    if(!title || !description){
+        throw new ApiError(400, "details required")
+    }
+
+    const video = await Video.findByIdAndUpdate(
+        req.video?._id,
+        {
+            $set:{
+                title: title,
+                description: description,
+            }
+        },
+        {new: true}
+    )
+
+    return res.status(200).json(new ApiResponse(200, video , "details updated"))
 
 })
 
 const deleteVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
     //TODO: delete video
+
+    if (!videoId){
+        throw new ApiError(400, "no video id received")
+    }
+
+    const deletedVideo = await Video.findByIdAndDelete(videoId)
+
+    if(!deletedVideo){
+        throw new ApiError(400, "problem deleting video")
+    }
+
+    res.status(200)
+    .json(new ApiResponse(200, deletedVideo, "video deleted successfully"))
+
 })
 
 const togglePublishStatus = asyncHandler(async (req, res) => {
     const { videoId } = req.params
+
+    if (!videoId){
+        throw new ApiError(400, "no video id received")
+    }
+
+    const video = await Video.findById(videoId)
+
+    if(!video){
+        // throw new ApiError(400, "video not found")
+        video.isPublished = !video.isPublished
+        await video.save()
+    }
+
+    res.status(200)
+    .json(200, video, "video status toggled")
 })
 
 export {
