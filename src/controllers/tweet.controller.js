@@ -7,6 +7,30 @@ import {asyncHandler} from "../utils/asyncHandler.js"
 
 const createTweet = asyncHandler(async (req, res) => {
     //TODO: create tweet
+    try {
+        const {content} = req.body
+    
+        if (!content){
+            throw new ApiError(400, "no content")
+        }
+    
+        const owner = await User.findById(req.user?._id)
+    
+        const newTweet = new Tweet({
+            content,
+            owner
+        })
+
+        await newTweet.save()
+
+        res.status(200)
+        .json( new ApiResponse(200, newTweet, "new tweet created"))
+    } catch (error) {
+        console.error(error)
+        throw new ApiError(400, "problem in creating a tweet.")
+    }
+
+
 })
 
 const getUserTweets = asyncHandler(async (req, res) => {
